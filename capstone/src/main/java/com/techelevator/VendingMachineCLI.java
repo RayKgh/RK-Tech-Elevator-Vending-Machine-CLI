@@ -25,14 +25,26 @@ public class VendingMachineCLI {
 				ui.displayMainMenu();
 			} else if (userInput.equals("2")) {
 				ui.displayPurchasingMenu();
+				while (true) {
+					String choice = scanner.nextLine();
+					if (choice.equals("1")) {
+						System.out.println("How much money would you like to add to your balance (Please enter a whole dollar amount)?");
+						String valueToAdd = scanner.nextLine();
+						ui.feedMoney(valueToAdd);
+						ui.displayPurchasingMenu();
+						// Feed money
+					} else if (choice.equals("2")) {
+						// Select Product
+					}  else if (choice.equals("3")) {
+						break;
+						// ui.displayMainMenu();
+					}
+				}
+				ui.displayMainMenu();
 			} if (userInput.equals("3")) {
 				return;
 			}
 		}
-
-
-
-
 
 	}
 
