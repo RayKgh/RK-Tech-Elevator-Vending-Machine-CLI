@@ -45,10 +45,6 @@ public class Item {
         return itemType;
     }
 
-    public int getQuantityAvailable() {
-        return getCurrentInventory() - getAmountSold();
-    }
-
     public void printMessage() {
         if (itemType.equals("Chip")) {
             System.out.println("Crunch Crunch, Yum!");
