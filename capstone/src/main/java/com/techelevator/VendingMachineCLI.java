@@ -28,16 +28,35 @@ public class VendingMachineCLI {
 				while (true) {
 					String choice = scanner.nextLine();
 					if (choice.equals("1")) {
+						// Feed machine
 						System.out.println("How much money would you like to add to your balance (Please enter a whole dollar amount)?");
 						String valueToAdd = scanner.nextLine();
 						ui.feedMoney(valueToAdd);
 						ui.displayPurchasingMenu();
-						// Feed money
 					} else if (choice.equals("2")) {
-						// Select Product
+						// Purchase item
+						System.out.println("Please select an item to purchase: ");
+						vml.displayItems();
+						while (true) {
+							String itemID = scanner.nextLine();
+							if (!vml.itemsForPurchase.containsKey(itemID)) {
+								System.out.println("Invalid selection.");
+								ui.displayPurchasingMenu();
+								break;
+							} else if (ui.getBalance().compareTo(vml.itemsForPurchase.get(itemID).getItemPrice()) == -1) {
+								System.out.println("Insufficient funds. Please select a different item or insert money.");
+								ui.displayPurchasingMenu();
+								break;
+							} else {
+								vml.itemsForPurchase.get(itemID).purchase();
+								vml.itemsForPurchase.get(itemID).printMessage();
+								ui.updateBalance(vml.itemsForPurchase.get(itemID).getItemPrice());
+								ui.displayPurchasingMenu();
+								break;
+							}
+						}
 					}  else if (choice.equals("3")) {
 						break;
-						// ui.displayMainMenu();
 					}
 				}
 				ui.displayMainMenu();

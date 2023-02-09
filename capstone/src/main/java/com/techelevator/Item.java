@@ -41,8 +41,9 @@ public class Item {
     }
 
     public void purchase() {
-        if (currentInventory < 0) {
+        if (currentInventory > 0) {
             currentInventory--;
+            amountSold++;
         } else {
             System.out.println("Product is sold out. Please select another option.");
             // How to return to list of products?

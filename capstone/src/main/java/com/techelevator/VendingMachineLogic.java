@@ -9,6 +9,9 @@ public class VendingMachineLogic {
 
     List<Item> vendingMachineItems = new ArrayList<>();
 
+    Map<String, Item> itemsForPurchase = new HashMap<>();
+
+
 
     public List<Item> StockVendingMachine(File vendingMachineStock) {
         try (Scanner fileReader = new Scanner(vendingMachineStock)) {
@@ -17,6 +20,7 @@ public class VendingMachineLogic {
                 BigDecimal itemPrice = new BigDecimal(itemAttributes[2]);
                 Item item = new Item(itemAttributes[0], itemAttributes[1], itemPrice, itemAttributes[3]);
                 vendingMachineItems.add(item);
+                itemsForPurchase.put(item.getSlotIdentifier(), item);
             }
         } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());

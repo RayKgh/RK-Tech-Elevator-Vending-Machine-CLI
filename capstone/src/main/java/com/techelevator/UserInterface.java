@@ -32,5 +32,9 @@ public class UserInterface {
 
     }
 
+    public void updateBalance(BigDecimal itemPrice) {
+        balance = balance.subtract(itemPrice);
+    }
+
 
 }
