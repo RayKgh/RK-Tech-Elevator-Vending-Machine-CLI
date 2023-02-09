@@ -3,20 +3,26 @@ package com.techelevator;
 import java.math.BigDecimal;
 
 public class Item {
+    private String slotIdentifier;
     private String itemName;
-    private BigDecimal itemPrice = new BigDecimal("");
-    private int startingInventory;
+    private BigDecimal itemPrice;
+    private int currentInventory;
     private int amountSold;
     private String itemType;
 
     final int MAX_QUANTITY = 5;
 
-    public Item(String itemName, BigDecimal itemPrice, String itemType) {
+    public Item(String slotIdentifier, String itemName, BigDecimal itemPrice, String itemType) {
+        this.slotIdentifier = slotIdentifier;
         this.itemName = itemName;
         this.itemPrice = itemPrice;
         this.itemType = itemType;
-        startingInventory = MAX_QUANTITY;
+        currentInventory = MAX_QUANTITY;
         amountSold = 0;
+    }
+
+    public String getSlotIdentifier() {
+        return slotIdentifier;
     }
 
     public String getItemName() {
@@ -27,8 +33,8 @@ public class Item {
         return itemPrice;
     }
 
-    public int getStartingInventory() {
-        return startingInventory;
+    public int getCurrentInventory() {
+        return currentInventory;
     }
 
     public int getAmountSold() {
@@ -37,6 +43,10 @@ public class Item {
 
     public String getItemType() {
         return itemType;
+    }
+
+    public int getQuantityAvailable() {
+        return getCurrentInventory() - getAmountSold();
     }
 
     public void printMessage() {
