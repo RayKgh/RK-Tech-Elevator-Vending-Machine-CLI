@@ -26,8 +26,9 @@ public class VendingMachineLogic {
     }
 
     public void displayItems() {
+        System.out.println("Loc.     Item               Price  Qty");
         for (Item vendingMachineItem : vendingMachineItems) {
-            System.out.println(vendingMachineItem.getSlotIdentifier() + " | " + vendingMachineItem.getItemName() + " | $" + vendingMachineItem.getItemPrice() + " | " + vendingMachineItem.getCurrentInventory());
+            System.out.printf("%s | %-20s | $%s | %s\n",vendingMachineItem.getSlotIdentifier(), vendingMachineItem.getItemName(), vendingMachineItem.getItemPrice(),vendingMachineItem.getCurrentInventory());
 
         }
     }
