@@ -6,14 +6,16 @@ import java.math.BigDecimal;
 import java.util.*;
 
 public class VendingMachineLogic {
-
+    UserInterface ui = new UserInterface();
     List<Item> vendingMachineItems = new ArrayList<>();
 
     Map<String, Item> itemsForPurchase = new HashMap<>();
 
-
-
-    public List<Item> StockVendingMachine(File vendingMachineStock) {
+    /*
+    The StockVendingMachine() method runs when the vending machine starts and accepts a CSV input file as a parameter.
+    It reads the item information from the file and creates both a List<Item> and a Map<String, Item> of the items.
+     */
+    public void StockVendingMachine(File vendingMachineStock) {
         try (Scanner fileReader = new Scanner(vendingMachineStock)) {
             while (fileReader.hasNextLine()) {
                 String[] itemAttributes = fileReader.nextLine().split("\\|");
@@ -25,16 +27,40 @@ public class VendingMachineLogic {
         } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());
         }
-
-        return vendingMachineItems;
     }
 
     public void displayItems() {
-        System.out.println("Loc.     Item               Price  Qty");
+        System.out.println("_______________________________________");
+        System.out.println("|Slot|        Item        | Price |Qty|");
+        System.out.println("_______________________________________");
         for (Item vendingMachineItem : vendingMachineItems) {
-            System.out.printf("%s | %-20s | $%s | %s\n",vendingMachineItem.getSlotIdentifier(), vendingMachineItem.getItemName(), vendingMachineItem.getItemPrice(),vendingMachineItem.getCurrentInventory());
+            System.out.printf("| %s | %-18s | $%s | %s |\n", vendingMachineItem.getSlotIdentifier(), vendingMachineItem.getItemName(), vendingMachineItem.getItemPrice(), vendingMachineItem.getCurrentInventory());
 
         }
+        System.out.println("_______________________________________");
     }
 
+    public StringBuilder dispenseChange(BigDecimal balance) {
+        StringBuilder changeOutput = new StringBuilder("Please collect your change: ");
+        BigDecimal QUARTER = new BigDecimal("0.25");
+        BigDecimal DIME = new BigDecimal("0.10");
+        BigDecimal NICKEL = new BigDecimal("0.05");
+
+        if (balance.compareTo(BigDecimal.ZERO) == 0) {
+            return changeOutput.append("$0.00");
+        }
+        while (balance.compareTo(BigDecimal.ZERO) > 0) {
+            if (balance.compareTo(QUARTER) >= 0) {
+                changeOutput.append("\nQuarter");
+                balance = balance.subtract(QUARTER);
+            } else if (balance.compareTo(DIME) >= 0) {
+                changeOutput.append("\nDime");
+                balance = balance.subtract(DIME);
+            } else if (balance.compareTo(NICKEL) >= 0) {
+                changeOutput.append("\nNickel");
+                balance = balance.subtract(NICKEL);
+            }
+        }
+        return changeOutput;
+    }
 }
