@@ -6,7 +6,23 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
 
-public class VendingMachineLogic {
+public class VendingMachine {
+
+    private BigDecimal balance = new BigDecimal("0.00");
+
+    public BigDecimal getBalance() {
+        return balance;
+    }
+
+    public void updateBalance(BigDecimal itemPrice) {
+        balance = balance.subtract(itemPrice);
+    }
+
+    public void feedMoney(String dollars) {
+        balance = balance.add(new BigDecimal(dollars));
+    }
+
+
     UserInterface ui = new UserInterface();
     List<Item> vendingMachineItems = new ArrayList<>();
 
@@ -67,13 +83,13 @@ public class VendingMachineLogic {
 
     public StringBuilder printToLog(String businessProcess, BigDecimal moneyInOrOut) {
         StringBuilder logEntry = new StringBuilder();
-        logEntry.append(LocalDateTime.now() + " " + businessProcess + " $" + moneyInOrOut + " $" + ui.getBalance());
+        logEntry.append(LocalDateTime.now() + " " + businessProcess + " $" + moneyInOrOut + " $" + getBalance());
         return logEntry;
     }
 
     public StringBuilder printToLog(String itemName, String locationIdentifier, BigDecimal itemPrice) {
         StringBuilder logEntry = new StringBuilder();
-        logEntry.append(LocalDateTime.now() + " " + itemName + " $" + locationIdentifier + " " + itemPrice + " $" + ui.getBalance());
+        logEntry.append(LocalDateTime.now() + " " + itemName + " $" + locationIdentifier + " " + itemPrice + " $" + getBalance());
         return logEntry;
     }
 
