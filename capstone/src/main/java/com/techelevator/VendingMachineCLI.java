@@ -80,10 +80,13 @@ public class VendingMachineCLI {
             } else if (userInput.equals("3")) {
                 return;
             } else if (userInput.equals("4")) {
+                System.out.println("Generating Sales Report");
                 LocalDateTime now = LocalDateTime.now();
                 final String dateTime = now.format(DateTimeFormatter.ofPattern("yyyy_MM_dd_HHmmss_"));
                 final File salesReport = new File(dateTime + "salesreport.csv");
                 vm.generateSalesReport(vm.vendingMachineItems, salesReport);
+                System.out.println("Done\n");
+                ui.displayMainMenu();
             }
         }
     }

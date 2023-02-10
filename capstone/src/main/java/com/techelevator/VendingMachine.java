@@ -84,16 +84,12 @@ public class VendingMachine {
     LocalDateTime now = LocalDateTime.now();
     final String dateTime = now.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
 
-    public StringBuilder printToLog(String businessProcess, BigDecimal moneyInOrOut) {
-        StringBuilder logEntry = new StringBuilder();
-        logEntry.append(dateTime + " " + businessProcess + " $" + moneyInOrOut + " $" + getBalance());
-        return logEntry;
+    public String printToLog(String businessProcess, BigDecimal moneyInOrOut) {
+        return (dateTime + " " + businessProcess + " $" + moneyInOrOut + " $" + getBalance());
     }
 
-    public StringBuilder printToLog(String itemName, String locationIdentifier, BigDecimal itemPrice) {
-        StringBuilder logEntry = new StringBuilder();
-        logEntry.append(dateTime + " " + itemName + " " + locationIdentifier + " $" + itemPrice + " $" + getBalance());
-        return logEntry;
+    public String printToLog(String itemName, String locationIdentifier, BigDecimal itemPrice) {
+        return (dateTime + " " + itemName + " " + locationIdentifier + " $" + itemPrice + " $" + getBalance());
     }
 
     public void generateSalesReport(List<Item> vendingMachineItems, File salesReport) {
@@ -101,7 +97,7 @@ public class VendingMachine {
             BigDecimal totalSales = new BigDecimal("0.00");
             for (Item item : vendingMachineItems) {
                 sRWriter.printf("%-18s | %d\n", item.getItemName(), item.getAmountSold());
-                totalSales.add(new BigDecimal(item.getAmountSold()).multiply(item.getItemPrice()));
+                totalSales = totalSales.add(new BigDecimal(item.getAmountSold()).multiply(item.getItemPrice()));
             }
             sRWriter.println("**TOTAL SALES REVENUE** $" + totalSales);
         } catch (FileNotFoundException e) {
