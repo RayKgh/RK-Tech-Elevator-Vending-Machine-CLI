@@ -20,7 +20,7 @@ public class VendingMachineCLI {
             String userInput = scanner.nextLine();
 
             if (userInput.equals("1")) {
-                vm.displayItems();
+                ui.displayItems(vm.vendingMachineItems);
                 System.out.println("\nPress any key to return to Main Menu.");
                 scanner.nextLine();
                 ui.displayMainMenu();
@@ -34,11 +34,11 @@ public class VendingMachineCLI {
                             System.out.println("How much money would you like to add to your balance (Please enter a whole dollar amount)?");
                             String valueToAdd = scanner.nextLine();
                             vm.feedMoney(valueToAdd);
-                            logWriter.println(vm.printToLog("FEED MONEY", new BigDecimal(valueToAdd)));
+                            logWriter.println(vm.printToLog("FEED MONEY:", new BigDecimal(valueToAdd)));
                             ui.displayPurchasingMenu(vm.getBalance());
                         } else if (choice.equals("2")) {    // Select Product
                             System.out.println("Please select an item to purchase: ");
-                            vm.displayItems();
+                            ui.displayItems(vm.vendingMachineItems);
                             while (true) {
                                 String itemID = scanner.nextLine();
                                 if (!vm.itemsForPurchase.containsKey(itemID)) {
@@ -53,13 +53,16 @@ public class VendingMachineCLI {
                                     vm.itemsForPurchase.get(itemID).purchase();
                                     vm.itemsForPurchase.get(itemID).printMessage();
                                     vm.updateBalance(vm.itemsForPurchase.get(itemID).getItemPrice());
+                                    logWriter.println(vm.printToLog(vm.itemsForPurchase.get(itemID).getItemName(), vm.itemsForPurchase.get(itemID).getSlotIdentifier(), vm.itemsForPurchase.get(itemID).getItemPrice()));
                                     ui.displayPurchasingMenu(vm.getBalance());
                                     break;
                                 }
                             }
                         } else if (choice.equals("3")) {    // Finish Transaction
                             System.out.println(vm.dispenseChange(vm.getBalance()));
+                            BigDecimal changeToReturn = vm.getBalance();
                             vm.updateBalance(vm.getBalance());
+                            logWriter.println(vm.printToLog("GIVE CHANGE:", changeToReturn));
                             ui.displayMainMenu();
                             break;
                         }

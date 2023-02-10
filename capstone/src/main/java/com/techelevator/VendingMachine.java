@@ -14,6 +14,7 @@ public class VendingMachine {
         return balance;
     }
 
+
     public void updateBalance(BigDecimal itemPrice) {
         balance = balance.subtract(itemPrice);
     }
@@ -22,8 +23,6 @@ public class VendingMachine {
         balance = balance.add(new BigDecimal(dollars));
     }
 
-
-    UserInterface ui = new UserInterface();
     List<Item> vendingMachineItems = new ArrayList<>();
 
     Map<String, Item> itemsForPurchase = new HashMap<>();
@@ -45,17 +44,7 @@ public class VendingMachine {
             System.out.println(e.getMessage());
         }
     }
-    // shows user a list of the items on sale, their location in the machine, their price, and how many of each is in stock
-    public void displayItems() {
-        System.out.println("_______________________________________");
-        System.out.println("|Slot|        Item        | Price |Qty|");
-        System.out.println("_______________________________________");
-        for (Item vendingMachineItem : vendingMachineItems) {
-            System.out.printf("| %s | %-18s | $%s | %s |\n", vendingMachineItem.getSlotIdentifier(), vendingMachineItem.getItemName(), vendingMachineItem.getItemPrice(), vendingMachineItem.getCurrentInventory());
 
-        }
-        System.out.println("_______________________________________");
-    }
     // calculates and dispenses "coins" as the user's "change"
     public StringBuilder dispenseChange(BigDecimal balance) {
         StringBuilder changeOutput = new StringBuilder("Please collect your change: ");
@@ -89,7 +78,7 @@ public class VendingMachine {
 
     public StringBuilder printToLog(String itemName, String locationIdentifier, BigDecimal itemPrice) {
         StringBuilder logEntry = new StringBuilder();
-        logEntry.append(LocalDateTime.now() + " " + itemName + " $" + locationIdentifier + " " + itemPrice + " $" + getBalance());
+        logEntry.append(LocalDateTime.now() + " " + itemName + " " + locationIdentifier + " $" + itemPrice + " $" + getBalance());
         return logEntry;
     }
 
