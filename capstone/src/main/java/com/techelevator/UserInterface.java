@@ -1,8 +1,6 @@
 package com.techelevator;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.Scanner;
 
 public class UserInterface {
     public BigDecimal getBalance() {
@@ -10,7 +8,6 @@ public class UserInterface {
     }
 
     private BigDecimal balance = new BigDecimal("0.00");
-
 
     public void displayMainMenu() {
         System.out.printf("\n** MAIN MENU **\n" + "Please select from the following options:\n\n" + "(1) Display Vending Machine Items\n" +
@@ -26,9 +23,7 @@ public class UserInterface {
     }
 
     public void feedMoney(String dollars) {
-        BigDecimal valueToAdd = new BigDecimal(dollars);
-        balance = balance.add(valueToAdd);
-
+        balance = balance.add(new BigDecimal(dollars));
     }
 
     public void updateBalance(BigDecimal itemPrice) {

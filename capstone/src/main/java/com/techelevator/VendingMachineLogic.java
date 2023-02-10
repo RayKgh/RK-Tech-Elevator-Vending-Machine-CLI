@@ -3,6 +3,7 @@ package com.techelevator;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class VendingMachineLogic {
@@ -28,7 +29,7 @@ public class VendingMachineLogic {
             System.out.println(e.getMessage());
         }
     }
-
+    // shows user a list of the items on sale, their location in the machine, their price, and how many of each is in stock
     public void displayItems() {
         System.out.println("_______________________________________");
         System.out.println("|Slot|        Item        | Price |Qty|");
@@ -39,7 +40,7 @@ public class VendingMachineLogic {
         }
         System.out.println("_______________________________________");
     }
-
+    // calculates and dispenses "coins" as the user's "change"
     public StringBuilder dispenseChange(BigDecimal balance) {
         StringBuilder changeOutput = new StringBuilder("Please collect your change: ");
         BigDecimal QUARTER = new BigDecimal("0.25");
@@ -63,4 +64,17 @@ public class VendingMachineLogic {
         }
         return changeOutput;
     }
+
+    public StringBuilder printToLog(String businessProcess, BigDecimal moneyInOrOut) {
+        StringBuilder logEntry = new StringBuilder();
+        logEntry.append(LocalDateTime.now() + " " + businessProcess + " $" + moneyInOrOut + " $" + ui.getBalance());
+        return logEntry;
+    }
+
+    public StringBuilder printToLog(String itemName, String locationIdentifier, BigDecimal itemPrice) {
+        StringBuilder logEntry = new StringBuilder();
+        logEntry.append(LocalDateTime.now() + " " + itemName + " $" + locationIdentifier + " " + itemPrice + " $" + ui.getBalance());
+        return logEntry;
+    }
+
 }
