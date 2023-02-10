@@ -2,6 +2,8 @@ package com.techelevator;
 
 import java.io.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 public class VendingMachineCLI {
@@ -26,21 +28,21 @@ public class VendingMachineCLI {
                 ui.displayMainMenu();
             } else if (userInput.equals("2")) {        // Purchase Process
                 ui.displayPurchasingMenu(vm.getBalance());
-                while (true) {
-                    try (final FileOutputStream log = new FileOutputStream(machineLog, true);
-                        final PrintWriter logWriter = new PrintWriter(log)) {
+                try (final FileOutputStream log = new FileOutputStream(machineLog, true);
+                     final PrintWriter logWriter = new PrintWriter(log)) {
+                    while (true) {
                         String choice = scanner.nextLine();
                         if (choice.equals("1")) {   // Feed machine
                             System.out.println("How much money would you like to add to your balance (Please enter a whole dollar amount)?");
                             String valueToAdd = scanner.nextLine();
                             vm.feedMoney(valueToAdd);
-                            logWriter.println(vm.printToLog("FEED MONEY:", new BigDecimal(valueToAdd)));
+                            logWriter.println(vm.printToLog("FEED MONEY:", new BigDecimal(valueToAdd + ".00")));
                             ui.displayPurchasingMenu(vm.getBalance());
                         } else if (choice.equals("2")) {    // Select Product
                             System.out.println("Please select an item to purchase: ");
                             ui.displayItems(vm.vendingMachineItems);
                             while (true) {
-                                String itemID = scanner.nextLine();
+                                String itemID = scanner.nextLine().toUpperCase();
                                 if (!vm.itemsForPurchase.containsKey(itemID)) {
                                     System.out.println("Invalid selection.");
                                     ui.displayPurchasingMenu(vm.getBalance());
@@ -50,10 +52,12 @@ public class VendingMachineCLI {
                                     ui.displayPurchasingMenu(vm.getBalance());
                                     break;
                                 } else {
-                                    vm.itemsForPurchase.get(itemID).purchase();
+                                    vm.itemsForPurchase.get(itemID).purchaseItem();
                                     vm.itemsForPurchase.get(itemID).printMessage();
                                     vm.updateBalance(vm.itemsForPurchase.get(itemID).getItemPrice());
-                                    logWriter.println(vm.printToLog(vm.itemsForPurchase.get(itemID).getItemName(), vm.itemsForPurchase.get(itemID).getSlotIdentifier(), vm.itemsForPurchase.get(itemID).getItemPrice()));
+                                    logWriter.println(vm.printToLog(vm.itemsForPurchase.get(itemID).getItemName(),
+                                            vm.itemsForPurchase.get(itemID).getSlotIdentifier(),
+                                            vm.itemsForPurchase.get(itemID).getItemPrice()));
                                     ui.displayPurchasingMenu(vm.getBalance());
                                     break;
                                 }
@@ -66,14 +70,20 @@ public class VendingMachineCLI {
                             ui.displayMainMenu();
                             break;
                         }
-                    } catch (FileNotFoundException e) {
-                        System.out.println(e.getMessage());
-                    } catch (IOException e) {
-                        System.out.println(e.getMessage());
                     }
+                } catch (FileNotFoundException e) {
+                    System.out.println(e.getMessage());
+                } catch (IOException e) {
+                    System.out.println(e.getMessage());
                 }
+
             } else if (userInput.equals("3")) {
                 return;
+            } else if (userInput.equals("4")) {
+                LocalDateTime now = LocalDateTime.now();
+                final String dateTime = now.format(DateTimeFormatter.ofPattern("yyyy_MM_dd_HHmmss_"));
+                final File salesReport = new File(dateTime + "salesreport.csv");
+                vm.generateSalesReport(vm.vendingMachineItems, salesReport);
             }
         }
     }

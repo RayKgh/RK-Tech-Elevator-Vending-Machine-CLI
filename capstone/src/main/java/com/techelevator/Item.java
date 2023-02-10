@@ -40,7 +40,7 @@ public class Item {
         return String.valueOf(currentInventory);
     }
 
-    public void purchase() {
+    public void purchaseItem() {
         if (currentInventory > 0) {
             currentInventory--;
             amountSold++;
