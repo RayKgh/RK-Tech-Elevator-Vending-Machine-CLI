@@ -20,23 +20,28 @@ public class VendingMachineCLI {
         vm.StockVendingMachine(vendingMachineStock);
         while (true) {
             String userInput = scanner.nextLine();
-
             if (userInput.equals("1")) {
-                ui.displayItems(vm.vendingMachineItems);
-                System.out.println("\nPress any key to return to Main Menu.");
-                scanner.nextLine();
-                ui.displayMainMenu();
+                ui.showVendingMachineChoices(scanner, vm.vendingMachineItems);
             } else if (userInput.equals("2")) {        // Purchase Process
                 ui.displayPurchasingMenu(vm.getBalance());
-                try (final FileOutputStream log = new FileOutputStream(machineLog, true);
-                     final PrintWriter logWriter = new PrintWriter(log)) {
+                try (final FileOutputStream vmLog = new FileOutputStream(machineLog, true);
+                     final PrintWriter logWriter = new PrintWriter(vmLog)) {
                     while (true) {
                         String choice = scanner.nextLine();
                         if (choice.equals("1")) {   // Feed machine
                             System.out.println("How much money would you like to add to your balance (Please enter a whole dollar amount)?");
-                            String valueToAdd = scanner.nextLine();
-                            vm.feedMoney(valueToAdd);
-                            logWriter.println(vm.printToLog("FEED MONEY:", new BigDecimal(valueToAdd + ".00")));
+                            String valueToAddToBalance = scanner.nextLine();
+                            try {
+                                if (Integer.parseInt(valueToAddToBalance) >= 0) {
+
+                                }
+                            } catch (NumberFormatException n) {
+                                System.out.println("Please enter a valid whole dollar amount.");
+                                ui.displayPurchasingMenu(vm.getBalance());
+                                break;
+                            }
+                            vm.feedMoney(valueToAddToBalance);
+                            logWriter.println(vm.printToLog("FEED MONEY:", new BigDecimal(valueToAddToBalance + ".00")));
                             ui.displayPurchasingMenu(vm.getBalance());
                         } else if (choice.equals("2")) {    // Select Product
                             System.out.println("Please select an item to purchase: ");
@@ -69,6 +74,9 @@ public class VendingMachineCLI {
                             logWriter.println(vm.printToLog("GIVE CHANGE:", changeToReturn));
                             ui.displayMainMenu();
                             break;
+                        } else {
+                            ui.invalidInputPrompt();
+                            ui.displayPurchasingMenu(vm.getBalance());
                         }
                     }
                 } catch (FileNotFoundException e) {
@@ -76,7 +84,6 @@ public class VendingMachineCLI {
                 } catch (IOException e) {
                     System.out.println(e.getMessage());
                 }
-
             } else if (userInput.equals("3")) {
                 return;
             } else if (userInput.equals("4")) {
@@ -84,8 +91,12 @@ public class VendingMachineCLI {
                 LocalDateTime now = LocalDateTime.now();
                 final String dateTime = now.format(DateTimeFormatter.ofPattern("yyyy_MM_dd_HHmmss_"));
                 final File salesReport = new File(dateTime + "salesreport.csv");
-                vm.generateSalesReport(vm.vendingMachineItems, salesReport);
+                SalesReportWriter salesReportWriter = new SalesReportWriter();
+                salesReportWriter.generateSalesReport(vm.vendingMachineItems, salesReport);
                 System.out.println("Done\n");
+                ui.displayMainMenu();
+            } else {
+                ui.invalidInputPrompt();
                 ui.displayMainMenu();
             }
         }
@@ -95,6 +106,9 @@ public class VendingMachineCLI {
         VendingMachineCLI cli = new VendingMachineCLI();
         cli.run();
     }
+
+
+
 
 
 }

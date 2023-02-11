@@ -2,6 +2,8 @@ package com.techelevator;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 public class UserInterface {
 
@@ -30,6 +32,26 @@ public class UserInterface {
 
         }
         System.out.println("_______________________________________");
+    }
+
+    public void showVendingMachineChoices(Scanner scanner, List<Item> vendingMachineItems) {
+        displayItems(vendingMachineItems);
+        System.out.println("\nPress any key to return to Main Menu.");
+        scanner.nextLine();
+        displayMainMenu();
+    }
+
+    public void waitOneSecond() {
+        try {
+            TimeUnit.SECONDS.sleep(1);
+        } catch (InterruptedException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void invalidInputPrompt() {
+        System.out.println("Please select 1, 2, or 3.");
+        waitOneSecond();
     }
 
 
