@@ -28,7 +28,7 @@ public class UserInterface {
         System.out.println("|Slot|        Item        | Price |Qty|");
         System.out.println("_______________________________________");
         for (Item vendingMachineItem : vendingMachineItems) {
-            System.out.printf("| %s | %-18s | $%s | %s |\n", vendingMachineItem.getSlotIdentifier(), vendingMachineItem.getItemName(), vendingMachineItem.getItemPrice(), vendingMachineItem.getCurrentInventory());
+            System.out.printf("| %s | %-18s | $%s | %s |\n", vendingMachineItem.getSlotID(), vendingMachineItem.getItemName(), vendingMachineItem.getItemPrice(), vendingMachineItem.getCurrentInventory());
 
         }
         System.out.println("_______________________________________");

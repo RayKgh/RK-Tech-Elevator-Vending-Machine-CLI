@@ -2,8 +2,6 @@ package com.techelevator;
 
 import java.io.*;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 public class VendingMachineCLI {
@@ -11,21 +9,19 @@ public class VendingMachineCLI {
 
     public final UserInterface ui = new UserInterface();
     public final VendingMachine vm = new VendingMachine();
-    public final File vendingMachineStock = new File("vendingmachine.csv");
-    public final File machineLog = new File("vendingmachinelog.csv");
+
+    public final LogWriter logWriter = new LogWriter();
 
     public void run() {
         // entry point for the vending machine
         ui.displayMainMenu();
-        vm.StockVendingMachine(vendingMachineStock);
+        vm.StockVendingMachine();
         while (true) {
             String userInput = scanner.nextLine();
             if (userInput.equals("1")) {
                 ui.showVendingMachineChoices(scanner, vm.vendingMachineItems);
             } else if (userInput.equals("2")) {        // Purchase Process
                 ui.displayPurchasingMenu(vm.getBalance());
-                try (final FileOutputStream vmLog = new FileOutputStream(machineLog, true);
-                     final PrintWriter logWriter = new PrintWriter(vmLog)) {
                     while (true) {
                         String choice = scanner.nextLine();
                         if (choice.equals("1")) {   // Feed machine
@@ -41,7 +37,7 @@ public class VendingMachineCLI {
                                 break;
                             }
                             vm.feedMoney(valueToAddToBalance);
-                            logWriter.println(vm.printToLog("FEED MONEY:", new BigDecimal(valueToAddToBalance + ".00")));
+                            logWriter.logTransaction("FEED MONEY:", new BigDecimal(valueToAddToBalance + ".00"), vm.getBalance());
                             ui.displayPurchasingMenu(vm.getBalance());
                         } else if (choice.equals("2")) {    // Select Product
                             System.out.println("Please select an item to purchase: ");
@@ -60,9 +56,9 @@ public class VendingMachineCLI {
                                     vm.itemsForPurchase.get(itemID).purchaseItem();
                                     vm.itemsForPurchase.get(itemID).printMessage();
                                     vm.updateBalance(vm.itemsForPurchase.get(itemID).getItemPrice());
-                                    logWriter.println(vm.printToLog(vm.itemsForPurchase.get(itemID).getItemName(),
-                                            vm.itemsForPurchase.get(itemID).getSlotIdentifier(),
-                                            vm.itemsForPurchase.get(itemID).getItemPrice()));
+                                    logWriter.logTransaction(vm.itemsForPurchase.get(itemID).getItemName(),
+                                            vm.itemsForPurchase.get(itemID).getSlotID(),
+                                            vm.itemsForPurchase.get(itemID).getItemPrice(), vm.getBalance());
                                     ui.displayPurchasingMenu(vm.getBalance());
                                     break;
                                 }
@@ -71,7 +67,7 @@ public class VendingMachineCLI {
                             System.out.println(vm.dispenseChange(vm.getBalance()));
                             BigDecimal changeToReturn = vm.getBalance();
                             vm.updateBalance(vm.getBalance());
-                            logWriter.println(vm.printToLog("GIVE CHANGE:", changeToReturn));
+                            logWriter.logTransaction("GIVE CHANGE:", changeToReturn, vm.getBalance());
                             ui.displayMainMenu();
                             break;
                         } else {
@@ -79,21 +75,11 @@ public class VendingMachineCLI {
                             ui.displayPurchasingMenu(vm.getBalance());
                         }
                     }
-                } catch (FileNotFoundException e) {
-                    System.out.println(e.getMessage());
-                } catch (IOException e) {
-                    System.out.println(e.getMessage());
-                }
             } else if (userInput.equals("3")) {
                 return;
             } else if (userInput.equals("4")) {
-                System.out.println("Generating Sales Report");
-                LocalDateTime now = LocalDateTime.now();
-                final String dateTime = now.format(DateTimeFormatter.ofPattern("yyyy_MM_dd_HHmmss_"));
-                final File salesReport = new File(dateTime + "salesreport.csv");
-                SalesReportWriter salesReportWriter = new SalesReportWriter();
-                salesReportWriter.generateSalesReport(vm.vendingMachineItems, salesReport);
-                System.out.println("Done\n");
+                SalesReport salesReport = new SalesReport();
+                salesReport.generateSalesReport(vm.vendingMachineItems);
                 ui.displayMainMenu();
             } else {
                 ui.invalidInputPrompt();

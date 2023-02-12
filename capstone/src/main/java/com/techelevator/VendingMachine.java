@@ -3,8 +3,6 @@ package com.techelevator;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class VendingMachine {
@@ -27,18 +25,19 @@ public class VendingMachine {
 
     Map<String, Item> itemsForPurchase = new HashMap<>();
 
-    /*
+    /**
     The StockVendingMachine() method runs when the vending machine starts and accepts a CSV input file as a parameter.
     It reads the item information from the file and creates both a List<Item> and a Map<String, Item> of the items.
      */
-    public void StockVendingMachine(File vendingMachineStock) {
+    private final File vendingMachineStock = new File("vendingmachine.csv");
+    public void StockVendingMachine() {
         try (Scanner fileReader = new Scanner(vendingMachineStock)) {
             while (fileReader.hasNextLine()) {
                 String[] itemAttributes = fileReader.nextLine().split("\\|");
                 BigDecimal itemPrice = new BigDecimal(itemAttributes[2]);
                 Item item = new Item(itemAttributes[0], itemAttributes[1], itemPrice, itemAttributes[3]);
                 vendingMachineItems.add(item);
-                itemsForPurchase.put(item.getSlotIdentifier(), item);
+                itemsForPurchase.put(item.getSlotID(), item);
             }
         } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());
@@ -68,17 +67,6 @@ public class VendingMachine {
             }
         }
         return changeOutput;
-    }
-
-    LocalDateTime now = LocalDateTime.now();
-    final String dateTime = now.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
-
-    public String printToLog(String businessProcess, BigDecimal moneyInOrOut) {
-        return (dateTime + " " + businessProcess + " $" + moneyInOrOut + " $" + getBalance());
-    }
-
-    public String printToLog(String itemName, String locationIdentifier, BigDecimal itemPrice) {
-        return (dateTime + " " + itemName + " " + locationIdentifier + " $" + itemPrice + " $" + getBalance());
     }
 
 }
