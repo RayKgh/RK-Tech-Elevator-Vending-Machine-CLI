@@ -17,8 +17,8 @@ public class VendingMachine {
         balance = balance.subtract(itemPrice);
     }
 
-    public void feedMoney(String dollars) {
-        balance = balance.add(new BigDecimal(dollars));
+    public void feedMoney(BigDecimal dollarAmount) {
+        balance = balance.add(dollarAmount);
     }
 
     List<Item> vendingMachineItems = new ArrayList<>();
@@ -45,27 +45,27 @@ public class VendingMachine {
     }
 
     // calculates and dispenses "coins" as the user's "change"
-    public StringBuilder dispenseChange(BigDecimal balance) {
-        StringBuilder changeOutput = new StringBuilder("Please collect your change: ");
+    public String dispenseChange(BigDecimal balance) {
+        String changeOutput = "Please collect your change: ";
         BigDecimal QUARTER = new BigDecimal("0.25");
         BigDecimal DIME = new BigDecimal("0.10");
         BigDecimal NICKEL = new BigDecimal("0.05");
 
         if (balance.compareTo(BigDecimal.ZERO) == 0) {
-            return changeOutput.append("$0.00");
+            return changeOutput + "$0.00";
         }
         while (balance.compareTo(BigDecimal.ZERO) > 0) {
             if (balance.compareTo(QUARTER) >= 0) {
                 BigDecimal numberOfQuarters = balance.divideToIntegralValue(QUARTER);
-                changeOutput.append("\n" + numberOfQuarters + " Quarter(s)");
+                changeOutput += String.format("\n -> %s Quarter(s)", numberOfQuarters);
                 balance = balance.subtract(QUARTER.multiply(numberOfQuarters));
             } else if (balance.compareTo(DIME) >= 0) {
                 BigDecimal numberOfDimes = balance.divideToIntegralValue(DIME);
-                changeOutput.append("\n" + numberOfDimes + " Dime(s)");
+                changeOutput += String.format("\n -> %s Dime(s)", numberOfDimes);
                 balance = balance.subtract(DIME.multiply(numberOfDimes));
             } else if (balance.compareTo(NICKEL) >= 0) {
                 BigDecimal numberOfNickels = balance.divideToIntegralValue(NICKEL);
-                changeOutput.append("\n" + numberOfNickels + " Nickel(s)");
+                changeOutput += String.format("\n -> %s Nickel(s)", numberOfNickels);
                 balance = balance.subtract(NICKEL.multiply(numberOfNickels));
             }
         }

@@ -13,7 +13,7 @@ public class LogWriter {
     public void logTransaction(String transactionType, BigDecimal moneyInOrOut, BigDecimal newBalance) {
         try (final FileOutputStream vmLog = new FileOutputStream(log, true);
              final PrintWriter logWriter = new PrintWriter(vmLog)) {
-            logWriter.printf("%s %-21s $%s $%s\n", dateTime, transactionType, moneyInOrOut, newBalance);
+            logWriter.printf("%s    %-18s $%s $%s\n", dateTime, transactionType, moneyInOrOut, newBalance);
         } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());
         } catch (IOException e) {
@@ -24,7 +24,7 @@ public class LogWriter {
     public void logTransaction(String itemName, String slotID, BigDecimal itemPrice, BigDecimal newBalance) {
         try (final FileOutputStream vmLog = new FileOutputStream(log, true);
              final PrintWriter logWriter = new PrintWriter(vmLog)) {
-            logWriter.printf("%s %-18s $%s $%s\n", dateTime, itemName, itemPrice, newBalance);
+            logWriter.printf("%s %s %-18s $%s $%s\n", dateTime, slotID, itemName, itemPrice, newBalance);
         } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());
         } catch (IOException e) {

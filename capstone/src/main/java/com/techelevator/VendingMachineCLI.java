@@ -1,6 +1,5 @@
 package com.techelevator;
 
-import java.io.*;
 import java.math.BigDecimal;
 import java.util.Scanner;
 
@@ -75,9 +74,14 @@ public class VendingMachineCLI {
 
     public void feedMachine() {
         ui.displayMessage("How much money would you like to add to your balance (Please enter a whole dollar amount)?");
-        String valueToAddToBalance = scanner.nextLine();
-        // need to validate that userInput can be parsed to integer
-        vm.feedMoney(valueToAddToBalance);
+        int valueToAddToBalance = 0;
+        try {
+            valueToAddToBalance = Integer.parseInt(scanner.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Please enter a whole dollar amount.");
+        }
+        BigDecimal dollarAmount = new BigDecimal(valueToAddToBalance);
+        vm.feedMoney(dollarAmount);
         logWriter.logTransaction("FEED MONEY:", new BigDecimal(valueToAddToBalance + ".00"), vm.getBalance());
     }
 
