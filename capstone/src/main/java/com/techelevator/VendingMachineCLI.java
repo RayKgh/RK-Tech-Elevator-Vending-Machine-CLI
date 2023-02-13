@@ -18,72 +18,23 @@ public class VendingMachineCLI {
         vm.StockVendingMachine();
         while (true) {
             String userInput = scanner.nextLine();
-            if (userInput.equals("1")) {
-                ui.showVendingMachineChoices(scanner, vm.vendingMachineItems);
-            } else if (userInput.equals("2")) {        // Purchase Process
-                ui.displayPurchasingMenu(vm.getBalance());
-                    while (true) {
-                        String choice = scanner.nextLine();
-                        if (choice.equals("1")) {   // Feed machine
-                            System.out.println("How much money would you like to add to your balance (Please enter a whole dollar amount)?");
-                            String valueToAddToBalance = scanner.nextLine();
-                            try {
-                                if (Integer.parseInt(valueToAddToBalance) >= 0) {
-
-                                }
-                            } catch (NumberFormatException n) {
-                                System.out.println("Please enter a valid whole dollar amount.");
-                                ui.displayPurchasingMenu(vm.getBalance());
-                                break;
-                            }
-                            vm.feedMoney(valueToAddToBalance);
-                            logWriter.logTransaction("FEED MONEY:", new BigDecimal(valueToAddToBalance + ".00"), vm.getBalance());
-                            ui.displayPurchasingMenu(vm.getBalance());
-                        } else if (choice.equals("2")) {    // Select Product
-                            System.out.println("Please select an item to purchase: ");
-                            ui.displayItems(vm.vendingMachineItems);
-                            while (true) {
-                                String itemID = scanner.nextLine().toUpperCase();
-                                if (!vm.itemsForPurchase.containsKey(itemID)) {
-                                    System.out.println("Invalid selection.");
-                                    ui.displayPurchasingMenu(vm.getBalance());
-                                    break;
-                                } else if (vm.getBalance().compareTo(vm.itemsForPurchase.get(itemID).getItemPrice()) == -1) {
-                                    System.out.println("Insufficient funds. Please select a different item or insert money.");
-                                    ui.displayPurchasingMenu(vm.getBalance());
-                                    break;
-                                } else {
-                                    vm.itemsForPurchase.get(itemID).purchaseItem();
-                                    vm.itemsForPurchase.get(itemID).printMessage();
-                                    vm.updateBalance(vm.itemsForPurchase.get(itemID).getItemPrice());
-                                    logWriter.logTransaction(vm.itemsForPurchase.get(itemID).getItemName(),
-                                            vm.itemsForPurchase.get(itemID).getSlotID(),
-                                            vm.itemsForPurchase.get(itemID).getItemPrice(), vm.getBalance());
-                                    ui.displayPurchasingMenu(vm.getBalance());
-                                    break;
-                                }
-                            }
-                        } else if (choice.equals("3")) {    // Finish Transaction
-                            System.out.println(vm.dispenseChange(vm.getBalance()));
-                            BigDecimal changeToReturn = vm.getBalance();
-                            vm.updateBalance(vm.getBalance());
-                            logWriter.logTransaction("GIVE CHANGE:", changeToReturn, vm.getBalance());
-                            ui.displayMainMenu();
-                            break;
-                        } else {
-                            ui.invalidInputPrompt();
-                            ui.displayPurchasingMenu(vm.getBalance());
-                        }
-                    }
-            } else if (userInput.equals("3")) {
-                return;
-            } else if (userInput.equals("4")) {
-                SalesReport salesReport = new SalesReport();
-                salesReport.generateSalesReport(vm.vendingMachineItems);
-                ui.displayMainMenu();
-            } else {
-                ui.invalidInputPrompt();
-                ui.displayMainMenu();
+            switch (userInput) {
+                case "1":
+                    ui.showVendingMachineChoices(scanner, vm.vendingMachineItems);
+                    break;
+                case "2":
+                    purchaseProcess();
+                    break;
+                case "3":   // Exits program
+                    return;
+                case "4":   // Hidden menu option
+                    generateSalesReport();
+                    ui.displayMainMenu();
+                    break;
+                default:
+                    ui.invalidInputPrompt();
+                    ui.displayMainMenu();
+                    break;
             }
         }
     }
@@ -93,8 +44,71 @@ public class VendingMachineCLI {
         cli.run();
     }
 
+    public void purchaseProcess() {
+        ui.displayPurchasingMenu(vm.getBalance());
+        label:
+        while (true) {
+            String choice = scanner.nextLine();
+            switch (choice) {
+                case "1":
+                    feedMachine();
+                    ui.displayPurchasingMenu(vm.getBalance());
+                    break;
+                case "2":
+                    selectProduct();
+                    break;
+                case "3":
+                    finishTransaction();
+                    break label;
+                default:
+                    ui.invalidInputPrompt();
+                    ui.displayPurchasingMenu(vm.getBalance());
+                    break;
+            }
+        }
+    }
 
+    public void generateSalesReport() {
+        SalesReport salesReport = new SalesReport();
+        salesReport.generateSalesReport(vm.vendingMachineItems);
+    }
 
+    public void feedMachine() {
+        ui.displayMessage("How much money would you like to add to your balance (Please enter a whole dollar amount)?");
+        String valueToAddToBalance = scanner.nextLine();
+        // need to validate that userInput can be parsed to integer
+        vm.feedMoney(valueToAddToBalance);
+        logWriter.logTransaction("FEED MONEY:", new BigDecimal(valueToAddToBalance + ".00"), vm.getBalance());
+    }
+
+    public void selectProduct(){
+        ui.displayMessage("Please select an item to purchase: ");
+        ui.displayItems(vm.vendingMachineItems);
+        String itemID = scanner.nextLine().toUpperCase();
+        if (!vm.itemsForPurchase.containsKey(itemID)) {
+            ui.displayMessage("Invalid selection.");
+            ui.displayPurchasingMenu(vm.getBalance());
+        } else if (vm.getBalance().compareTo(vm.itemsForPurchase.get(itemID).getItemPrice()) == -1) {
+            ui.displayMessage("Insufficient funds. Please select a different item or insert money.");
+            ui.displayPurchasingMenu(vm.getBalance());
+        } else {
+            vm.itemsForPurchase.get(itemID).purchaseItem();
+            vm.itemsForPurchase.get(itemID).printMessage();
+            vm.updateBalance(vm.itemsForPurchase.get(itemID).getItemPrice());
+            logWriter.logTransaction(vm.itemsForPurchase.get(itemID).getItemName(),
+                    vm.itemsForPurchase.get(itemID).getSlotID(),
+                    vm.itemsForPurchase.get(itemID).getItemPrice(), vm.getBalance());
+            ui.displayPurchasingMenu(vm.getBalance());
+        }
+    }
+
+    public void finishTransaction() {
+        System.out.println(vm.dispenseChange(vm.getBalance()));
+        BigDecimal changeToReturn = vm.getBalance();
+        vm.updateBalance(vm.getBalance()); // updates balance to zero by subtracting the balance
+        logWriter.logTransaction("GIVE CHANGE:", changeToReturn, vm.getBalance());
+        ui.displayMainMenu();
+    }
 
 
 }

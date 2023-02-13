@@ -54,6 +54,10 @@ public class UserInterface {
         waitOneSecond();
     }
 
+    public void displayMessage(String message) {
+        System.out.println(message);
+    }
+
 
 
 }

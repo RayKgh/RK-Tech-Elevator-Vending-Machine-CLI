@@ -56,14 +56,17 @@ public class VendingMachine {
         }
         while (balance.compareTo(BigDecimal.ZERO) > 0) {
             if (balance.compareTo(QUARTER) >= 0) {
-                changeOutput.append("\nQuarter");
-                balance = balance.subtract(QUARTER);
+                BigDecimal numberOfQuarters = balance.divideToIntegralValue(QUARTER);
+                changeOutput.append("\n" + numberOfQuarters + " Quarter(s)");
+                balance = balance.subtract(QUARTER.multiply(numberOfQuarters));
             } else if (balance.compareTo(DIME) >= 0) {
-                changeOutput.append("\nDime");
-                balance = balance.subtract(DIME);
+                BigDecimal numberOfDimes = balance.divideToIntegralValue(DIME);
+                changeOutput.append("\n" + numberOfDimes + " Dime(s)");
+                balance = balance.subtract(DIME.multiply(numberOfDimes));
             } else if (balance.compareTo(NICKEL) >= 0) {
-                changeOutput.append("\nNickel");
-                balance = balance.subtract(NICKEL);
+                BigDecimal numberOfNickels = balance.divideToIntegralValue(NICKEL);
+                changeOutput.append("\n" + numberOfNickels + " Nickel(s)");
+                balance = balance.subtract(NICKEL.multiply(numberOfNickels));
             }
         }
         return changeOutput;
