@@ -41,12 +41,13 @@ public class Item {
     }
 
     public void purchaseItem() {
-        if (currentInventory > 0) {
+        if (currentInventory == 0) {
+            System.out.println("Product is sold out. Please select another option.");
+            return;
+        } else {
             currentInventory--;
             amountSold++;
-        } else {
-            System.out.println("Product is sold out. Please select another option.");
-            // How to return to list of products?
+            printMessage();
         }
     }
 

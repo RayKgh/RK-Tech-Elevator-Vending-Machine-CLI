@@ -97,7 +97,6 @@ public class VendingMachineCLI {
             ui.displayPurchasingMenu(vm.getBalance());
         } else {
             vm.itemsForPurchase.get(itemID).purchaseItem();
-            vm.itemsForPurchase.get(itemID).printMessage();
             vm.updateBalance(vm.itemsForPurchase.get(itemID).getItemPrice());
             logWriter.logTransaction(vm.itemsForPurchase.get(itemID).getItemName(),
                     vm.itemsForPurchase.get(itemID).getSlotID(),
