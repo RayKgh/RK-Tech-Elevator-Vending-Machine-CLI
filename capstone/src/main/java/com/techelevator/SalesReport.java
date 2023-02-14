@@ -11,6 +11,10 @@ import java.util.List;
 public class SalesReport {
     private BigDecimal totalSales = new BigDecimal("0.00");
 
+    /**
+     * The generateSalesReport() method generates a .txt file that shows the total sales since the machine started.
+     * The name of the file includes the date and time so each sales report is uniquely named.
+     */
     public void generateSalesReport(List<Item> vendingMachineItems) {
         System.out.println("Generating Sales Report");
         LocalDateTime now = LocalDateTime.now();

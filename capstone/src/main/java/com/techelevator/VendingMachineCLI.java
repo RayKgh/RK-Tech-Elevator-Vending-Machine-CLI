@@ -108,7 +108,6 @@ public class VendingMachineCLI {
     public void finishTransaction() {
         System.out.println(vm.dispenseChange(vm.getBalance()));
         BigDecimal changeToReturn = vm.getBalance();
-        vm.updateBalance(vm.getBalance()); // updates balance to zero by subtracting the balance
         logWriter.logTransaction("GIVE CHANGE:", changeToReturn, vm.getBalance());
         ui.displayMainMenu();
     }

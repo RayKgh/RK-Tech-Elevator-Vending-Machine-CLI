@@ -44,31 +44,35 @@ public class VendingMachine {
         }
     }
 
-    // calculates and dispenses "coins" as the user's "change"
-    public String dispenseChange(BigDecimal balance) {
+    /**
+     * The dispenseChange() method checks if the user's changeToReturn is zero. If changeToReturn is non-zero, it
+     * calculates the change in the smallest number of coins using quarters, dimes, and nickels.
+     */
+
+    public String dispenseChange(BigDecimal changeToReturn) {
         String changeOutput = "Please collect your change: ";
         BigDecimal QUARTER = new BigDecimal("0.25");
         BigDecimal DIME = new BigDecimal("0.10");
         BigDecimal NICKEL = new BigDecimal("0.05");
 
-        if (balance.compareTo(BigDecimal.ZERO) == 0) {
+        if (changeToReturn.compareTo(BigDecimal.ZERO) == 0) {
             return changeOutput + "$0.00";
         }
-        while (balance.compareTo(BigDecimal.ZERO) > 0) {
-            if (balance.compareTo(QUARTER) >= 0) {
-                BigDecimal numberOfQuarters = balance.divideToIntegralValue(QUARTER);
-                changeOutput += String.format("\n -> %s Quarter(s)", numberOfQuarters);
-                balance = balance.subtract(QUARTER.multiply(numberOfQuarters));
-            } else if (balance.compareTo(DIME) >= 0) {
-                BigDecimal numberOfDimes = balance.divideToIntegralValue(DIME);
-                changeOutput += String.format("\n -> %s Dime(s)", numberOfDimes);
-                balance = balance.subtract(DIME.multiply(numberOfDimes));
-            } else if (balance.compareTo(NICKEL) >= 0) {
-                BigDecimal numberOfNickels = balance.divideToIntegralValue(NICKEL);
-                changeOutput += String.format("\n -> %s Nickel(s)", numberOfNickels);
-                balance = balance.subtract(NICKEL.multiply(numberOfNickels));
-            }
+        if (changeToReturn.compareTo(QUARTER) >= 0) {
+            BigDecimal numberOfQuarters = changeToReturn.divideToIntegralValue(QUARTER);
+            changeOutput += String.format("\n -> %s Quarter(s)", numberOfQuarters);
+            changeToReturn = changeToReturn.subtract(QUARTER.multiply(numberOfQuarters));
         }
+        if (changeToReturn.compareTo(DIME) >= 0) {
+            BigDecimal numberOfDimes = changeToReturn.divideToIntegralValue(DIME);
+            changeOutput += String.format("\n -> %s Dime(s)", numberOfDimes);
+            changeToReturn = changeToReturn.subtract(DIME.multiply(numberOfDimes));
+        }
+        if (changeToReturn.compareTo(NICKEL) >= 0) {
+            BigDecimal numberOfNickels = changeToReturn.divideToIntegralValue(NICKEL);
+            changeOutput += String.format("\n -> %s Nickel(s)", numberOfNickels);
+        }
+        updateBalance(balance);
         return changeOutput;
     }
 
