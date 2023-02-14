@@ -13,9 +13,9 @@ public class VendingMachineCLI {
 
     public void run() {
         // entry point for the vending machine
-        ui.displayMainMenu();
         vm.StockVendingMachine();
         while (true) {
+            ui.displayMainMenu();
             String userInput = scanner.nextLine();
             switch (userInput) {
                 case "1":
@@ -28,11 +28,9 @@ public class VendingMachineCLI {
                     return;
                 case "4":   // Hidden menu option
                     generateSalesReport();
-                    ui.displayMainMenu();
                     break;
                 default:
                     ui.invalidInputPrompt();
-                    ui.displayMainMenu();
                     break;
             }
         }
@@ -44,14 +42,13 @@ public class VendingMachineCLI {
     }
 
     public void purchaseProcess() {
-        ui.displayPurchasingMenu(vm.getBalance());
         label:
-        while (true) {
+        while (true) { // replace true with boolean var
+            ui.displayPurchasingMenu(vm.getBalance());
             String choice = scanner.nextLine();
             switch (choice) {
                 case "1":
                     feedMachine();
-                    ui.displayPurchasingMenu(vm.getBalance());
                     break;
                 case "2":
                     selectProduct();
@@ -61,7 +58,6 @@ public class VendingMachineCLI {
                     break label;
                 default:
                     ui.invalidInputPrompt();
-                    ui.displayPurchasingMenu(vm.getBalance());
                     break;
             }
         }
@@ -80,9 +76,13 @@ public class VendingMachineCLI {
         } catch (NumberFormatException e) {
             System.out.println("Please enter a whole dollar amount.");
         }
-        BigDecimal dollarAmount = new BigDecimal(valueToAddToBalance);
-        vm.feedMoney(dollarAmount);
-        logWriter.logTransaction("FEED MONEY:", new BigDecimal(valueToAddToBalance + ".00"), vm.getBalance());
+        if (valueToAddToBalance <= 0) {
+            ui.displayMessage("Cannot insert negative dollars.");
+        } else {
+            BigDecimal dollarAmount = new BigDecimal(valueToAddToBalance);
+            vm.feedMoney(dollarAmount);
+            logWriter.logTransaction("FEED MONEY:", new BigDecimal(valueToAddToBalance + ".00"), vm.getBalance());
+        }
     }
 
     public void selectProduct(){
@@ -106,8 +106,8 @@ public class VendingMachineCLI {
     }
 
     public void finishTransaction() {
-        System.out.println(vm.dispenseChange(vm.getBalance()));
         BigDecimal changeToReturn = vm.getBalance();
+        System.out.println(vm.dispenseChange(vm.getBalance()));
         logWriter.logTransaction("GIVE CHANGE:", changeToReturn, vm.getBalance());
         ui.displayMainMenu();
     }
